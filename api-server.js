@@ -105,12 +105,12 @@ app.post('/api/login', async (req, res, next) => {
         const body = results[0];
         // If user has not been verified yet then spit out an error
         // Verification needs to be done through the email system 
-        if(body.verified == false)
-        {
-            error = "Account is not verified";
-        }
-        else
-        {
+        // if(body.verified == false)
+        // {
+        //     error = "Account is not verified";
+        // }
+        // else
+        // {
             userID = body._id;
             console.log(userID);
             firstname = body.firstname;
@@ -126,7 +126,7 @@ app.post('/api/login', async (req, res, next) => {
             // {
             //     error = e.message;
             // }
-        }
+        // }
         
     }
     else
@@ -170,43 +170,43 @@ app.post('/api/register', async (req, res, next) => {
                 verified: false}
             ]);
             
-            sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+            // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
             // JWT For Email Verification (json web token)
-            emailToken = jwtLib.sign(
-            {
-                email: email
-            }, process.env.SENDGRID_API_KEY,
-            {
-                // one day expiration timer
-                expiresIn: "1d"
-            });
+            // emailToken = jwtLib.sign(
+            // {
+            //     email: email
+            // }, process.env.SENDGRID_API_KEY,
+            // {
+            //     // one day expiration timer
+            //     expiresIn: "1d"
+            // });
             
-            // Compose message for Email
-            const msg = {
-                from: 'petpalnotifications@gmail.com',
-                to: email,
-                subject: 'Pet Pal - Email Verification',
-                text: `
-                Hello!
-                Thank you for registering to Pet Pal! Please click the link below to verify your account:
-                http://${req.headers.host}/verifyEmail?token=${emailToken}
-                `,
-                html:`
-                <h1>Hello!</h1>
-                <p>Thank you for registering to Pet Pal!</p>
-                <p>Please click the link below to verify your account.</p>
-                <a href = "http://${req.headers.host}/verifyEmail?token=${emailToken}">Verify your account.</a>
-                `
-            };
+            // // Compose message for Email
+            // const msg = {
+            //     from: 'petpalnotifications@gmail.com',
+            //     to: email,
+            //     subject: 'Pet Pal - Email Verification',
+            //     text: `
+            //     Hello!
+            //     Thank you for registering to Pet Pal! Please click the link below to verify your account:
+            //     http://${req.headers.host}/verifyEmail?token=${emailToken}
+            //     `,
+            //     html:`
+            //     <h1>Hello!</h1>
+            //     <p>Thank you for registering to Pet Pal!</p>
+            //     <p>Please click the link below to verify your account.</p>
+            //     <a href = "http://${req.headers.host}/verifyEmail?token=${emailToken}">Verify your account.</a>
+            //     `
+            // };
 
-            console.log("Email sent!");
+            // console.log("Email sent!");
             
-            // Throws error if email does not exist 
-            sgMail.send(msg)
-            .catch((err) => {
-                error = err;
-            });
+            // // Throws error if email does not exist 
+            // sgMail.send(msg)
+            // .catch((err) => {
+            //     error = err;
+            // });
         }    
         catch(e)
         {
