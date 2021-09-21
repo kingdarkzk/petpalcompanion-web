@@ -1,22 +1,23 @@
+require('dotenv').config();
+const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
 
 // This block will work for now...
 // but long-term we want to move the URI to a .env file 
 const { MongoClient } = require('mongodb');
 // This URI is the most important part 
-const uri = "mongodb+srv://dbUser:zFXWkHDulZWPrI5t@petpalcompanion.zsaiy.mongodb.net/PetPalCompanion?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});
+try
+{
+    client.connect();
+}
+catch (e)
+{
+    console.log(e);
+}
 
-
-require('dotenv').config();
-const path = require('path');
-const express = require('express');
-const bodyParser = require('body-parser');
-const url = process.env.MONGODB_URI;
 
 
 // Send-grid object 
@@ -58,6 +59,17 @@ app.use((req, res, next) => {
 });
 
 // Something to do with heroku server?
+if (process.env.NODE_ENV === 'production') 
+{
+  // Set static folder
+  app.use(express.static(path.join(__dirname, 'frontend', 'build')));
+
+  app.get('*', (req, res, next) => 
+  {
+    res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+  });
+}
+
 if (process.env.NODE_ENV === 'production') 
 {
   // Set static folder
