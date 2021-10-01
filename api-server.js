@@ -24,19 +24,6 @@ catch (e)
 const sgMail = require('@sendgrid/mail');
 // Verification stuff (json web-token)
 const jwtLib = require('jsonwebtoken');
-
-/*
-// Used to connect to the mongo db 
-const client = new MongoClient(url);
-try {
-    client.connect();
-}
-catch (e) {
-    console.log(e);
-}
-*/
-
-const mongoose = require('mongoose');
 // jwt (json web token)
 // const jwt = require('./createJWT');
 
@@ -85,9 +72,6 @@ if (process.env.NODE_ENV === 'production')
 // API ENDPOINT HTML call to the server
 app.post('/api/login', async (req, res, next) => {
     const {email, password} = req.body;
-    // Info from the user 
-    console.log(email);
-    console.log(password);
     const db = client.db();
 
     // Stores all current users in an array (email, password)
@@ -105,28 +89,16 @@ app.post('/api/login', async (req, res, next) => {
         const body = results[0];
         // If user has not been verified yet then spit out an error
         // Verification needs to be done through the email system 
-        // if(body.verified == false)
-        // {
-        //     error = "Account is not verified";
-        // }
-        // else
-        // {
+        if(body.verified == false)
+        {
+            error = "Account is not verified";
+        }
+        else
+        {
             userID = body._id;
-            console.log(userID);
             firstname = body.firstname;
             lastname = body.lastname;
-
-            // try
-            // {
-            //     // Creates a unique indentifier token per user
-            //     ret = jwt.createToken(firstname, lastname, userID);
-            //     console.log(ret);
-            // }
-            // catch(e)
-            // {
-            //     error = e.message;
-            // }
-        // }
+        }
         
     }
     else
@@ -135,7 +107,7 @@ app.post('/api/login', async (req, res, next) => {
     }
 
     // res.json({firstname: firstname, lastname: lastname, userID: userID, error: error});
-    res.status(200).json({error: error, userID: userID, jwtToken: null});
+    res.status(200).json({error: error, userID: userID, firstName: firstname, lastName: lastname});
 });
 
 // User registration functionality 
