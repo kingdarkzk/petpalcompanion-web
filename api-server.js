@@ -277,7 +277,7 @@ app.post('/api/sendReset', async(req, res, next) => {
         console.log(e);
         error = e;
     }
-    return res.status(200).json({error: error, key: emailToken});
+    return res.status(200).json({error: error});
 });
 
 // Reset password functionality 
