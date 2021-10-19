@@ -142,43 +142,45 @@ app.post('/api/register', async (req, res, next) => {
                 verified: false}
             ]);
             
-            // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-            // JWT For Email Verification (json web token)
-            // emailToken = jwtLib.sign(
-            // {
-            //     email: email
-            // }, process.env.SENDGRID_API_KEY,
-            // {
-            //     // one day expiration timer
-            //     expiresIn: "1d"
-            // });
+            //JWT For Email Verification (json web token)
+            emailToken = jwtLib.sign(
+            {
+                email: email
+            }, process.env.SENDGRID_API_KEY,
+            {
+                // one day expiration timer
+                expiresIn: "1d"
+            });
             
-            // // Compose message for Email
-            // const msg = {
-            //     from: 'petpalnotifications@gmail.com',
-            //     to: email,
-            //     subject: 'Pet Pal - Email Verification',
-            //     text: `
-            //     Hello!
-            //     Thank you for registering to Pet Pal! Please click the link below to verify your account:
-            //     http://${req.headers.host}/verifyEmail?token=${emailToken}
-            //     `,
-            //     html:`
-            //     <h1>Hello!</h1>
-            //     <p>Thank you for registering to Pet Pal!</p>
-            //     <p>Please click the link below to verify your account.</p>
-            //     <a href = "http://${req.headers.host}/verifyEmail?token=${emailToken}">Verify your account.</a>
-            //     `
-            // };
+            // Compose message for Email
+            const msg = {
+                from: 'petpalnotifications@gmail.com',
+                to: email,
+                subject: 'Pet Pal - Email Verification',
+                text: `
+                Hello!
+                Thank you for registering to Pet Pal! Please copy and paste the link below into the app to verify your account:`
+                + emailToken +
+                `
+                `,
+                html:`
+                <h1>Hello!</h1>
+                <p>Thank you for registering to Pet Pal!</p>
+                <p>Please copy and paste the link below into the app to verify your account:</p>`
+                + emailToken +
+                `
+                `
+            };
 
-            // console.log("Email sent!");
+            console.log("Email sent!");
             
-            // // Throws error if email does not exist 
-            // sgMail.send(msg)
-            // .catch((err) => {
-            //     error = err;
-            // });
+            // Throws error if email does not exist 
+            sgMail.send(msg)
+            .catch((err) => {
+                error = err;
+            });
         }    
         catch(e)
         {
@@ -258,13 +260,11 @@ app.post('/api/sendReset', async(req, res, next) => {
         Verification Code:`
         + emailToken +
         `
-        http://${req.headers.host}/resetPassword
         `,
         html:`
         <p>Verification Code: </p>
         ` + emailToken +
         `
-        <a href = "http://${req.headers.host}/resetPassword">Reset password.</a>
         `
         }
         sgMail.send(msg)
@@ -277,7 +277,7 @@ app.post('/api/sendReset', async(req, res, next) => {
         console.log(e);
         error = e;
     }
-    return res.status(200).json({error: error});
+    return res.status(200).json({error: error, key: emailToken});
 });
 
 // Reset password functionality 
